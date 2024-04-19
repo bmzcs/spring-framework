@@ -55,8 +55,10 @@ public abstract class AbstractResource implements Resource {
 	@Override
 	public boolean exists() {
 		// Try file existence: can we find the file in the file system?
+		//是否是文件类型
 		if (isFile()) {
 			try {
+				//如果是文件，判断是否存在
 				return getFile().exists();
 			}
 			catch (IOException ex) {
@@ -66,6 +68,7 @@ public abstract class AbstractResource implements Resource {
 				}
 			}
 		}
+		//如果失败，判断输入流书否存在
 		// Fall back to stream existence: can we open the stream?
 		try {
 			getInputStream().close();
@@ -83,6 +86,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * This implementation always returns {@code true} for a resource
 	 * that {@link #exists() exists} (revised as of 5.1).
+	 * 是否可读，和判断是否存在是一个方法
 	 */
 	@Override
 	public boolean isReadable() {
@@ -91,6 +95,7 @@ public abstract class AbstractResource implements Resource {
 
 	/**
 	 * This implementation always returns {@code false}.
+	 * 是否可以代开
 	 */
 	@Override
 	public boolean isOpen() {
@@ -108,6 +113,7 @@ public abstract class AbstractResource implements Resource {
 	/**
 	 * This implementation throws a FileNotFoundException, assuming
 	 * that the resource cannot be resolved to a URL.
+	 * 获取资源，报错，交给子类实现
 	 */
 	@Override
 	public URL getURL() throws IOException {
@@ -116,6 +122,7 @@ public abstract class AbstractResource implements Resource {
 
 	/**
 	 * This implementation builds a URI based on the URL returned
+	 * 获取资源URI
 	 * by {@link #getURL()}.
 	 */
 	@Override

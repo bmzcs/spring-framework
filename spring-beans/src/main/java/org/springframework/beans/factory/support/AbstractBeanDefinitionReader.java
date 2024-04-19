@@ -45,22 +45,28 @@ import org.springframework.util.Assert;
  * @author Chris Beams
  * @since 11.12.2003
  * @see BeanDefinitionReaderUtils
+ * 基础实现类
  */
 public abstract class AbstractBeanDefinitionReader implements BeanDefinitionReader, EnvironmentCapable {
 
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	//Bean定义的工厂类
 	private final BeanDefinitionRegistry registry;
 
+	//资源加载器
 	@Nullable
 	private ResourceLoader resourceLoader;
 
+	//类加载器
 	@Nullable
 	private ClassLoader beanClassLoader;
 
+	//当前环境
 	private Environment environment;
 
+	//默认的bean名称生成器
 	private BeanNameGenerator beanNameGenerator = DefaultBeanNameGenerator.INSTANCE;
 
 
@@ -185,6 +191,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 		Assert.notNull(resources, "Resource array must not be null");
 		int count = 0;
 		for (Resource resource : resources) {
+			//实际调用子类实现方法处理
 			count += loadBeanDefinitions(resource);
 		}
 		return count;
@@ -192,6 +199,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 
 	@Override
 	public int loadBeanDefinitions(String location) throws BeanDefinitionStoreException {
+
 		return loadBeanDefinitions(location, null);
 	}
 
@@ -211,16 +219,20 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 	 * @see #loadBeanDefinitions(org.springframework.core.io.Resource[])
 	 */
 	public int loadBeanDefinitions(String location, @Nullable Set<Resource> actualResources) throws BeanDefinitionStoreException {
+		//获取资源管理器
 		ResourceLoader resourceLoader = getResourceLoader();
 		if (resourceLoader == null) {
 			throw new BeanDefinitionStoreException(
 					"Cannot load bean definitions from location [" + location + "]: no ResourceLoader available");
 		}
 
+		//如果是根据规则解析加载资源管理器
 		if (resourceLoader instanceof ResourcePatternResolver) {
 			// Resource pattern matching available.
 			try {
+				//获取资源
 				Resource[] resources = ((ResourcePatternResolver) resourceLoader).getResources(location);
+				//加载BeanDefinitions
 				int count = loadBeanDefinitions(resources);
 				if (actualResources != null) {
 					Collections.addAll(actualResources, resources);
